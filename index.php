@@ -2,12 +2,14 @@
 	session_start();
 	//$currentpage="View Employees"; 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Company DB</title>
 <!-- Latest compiled and minified CSS -->
+ <!-- these are some changes to see if we can commit new code -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
 <!-- jQuery library -->
