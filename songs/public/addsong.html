@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    
+<head>
+    <title>songs</title>
+    <h1>Music Services</h1>
+</head>
+
+<body>
+    <td>
+        <tr><button  ><a href="searchbygenre.html">Search By Genre</a></button></tr>
+        <tr><button ><a href="updatesong.html">Update a song</a></button></tr>
+        <tr><button  ><a href="deletesong.html">Delete a song</a></button></tr>
+        <tr><button  ><a href="addsong.html"> Add a song</a></button></tr>
+        <tr><button  ><a href="listall.html"> List all songs</a></button></tr>
+    </td>
+
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="effects.css">
+
+    
+    <form method="POST" action="/api/songs">
+        <fieldset>
+           <legend>Session Details</legend>
+           <p id="name"><label>Title: </label>
+           <input type="text" id="title" name="Title" ></p>
+           <p class="container"><label>artist</label>
+         
+            <input type="text" placeholder="Enter name" id="artist" name ="artist">
+           </p>
+           <p id="meeting"><label >Realeased </label> 
+            <input type="date" id="released" name="Realeased"></p>
+           
+           <p class="label"><label>Popularity: </label>
+               <input type="number" id="popularity" name="Popularity">
+           </p>			
+
+           <p class="label"><label>Genre: </label>
+            <input type="text" id="genre" name="Genre">
+             </p>	
+           <button type="submit" id="createButton" value="Submit">Add Song</button>
+           </fieldset>
+     </form>
+
+</body>
+        <footer>
+            <p>&#169 The Music Company - Created by Sabri Abounozha </p>
+        </footer>
+</html>

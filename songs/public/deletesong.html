@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    
+<head>
+    <title>songs</title>
+    <h1>Music Services</h1>
+</head>
+
+<body>
+
+
+    <td>
+        <tr><button  ><a href="searchbygenre.html">Search By Genre</a></button></tr>
+        <tr><button ><a href="updatesong.html">Update a song</a></button></tr>
+        <tr><button  ><a href="deletesong.html">Delete a song</a></button></tr>
+        <tr><button  ><a href="addsong.html"> Add a song</a></button></tr>
+        <tr><button  ><a href="listall.html"> List all songs</a></button></tr>
+    </td>
+
+    <h1>Songs</h1>
+
+<table id= "songtable">
+    
+
+ </table>
+
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="effects.css">
+    <script>addEventListener("DOMContentLoaded", async function() {
+        
+
+        
+const response = await fetch("/api/songs");
+    const songs = await response.json();
+    
+    
+    async function selectlistener(e){
+        e.preventDefault()
+        console.log(e.target.value)
+        fetch('/api/songs/' + e.target.value, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Deleted song:', data);
+        // Handle the response as needed
+      })
+      .catch(error => {
+        console.error('Failed to create song:', error);
+        // Handle the error as needed
+      });
+
+    }
+    
+    let html = "<tr> <th> Title </th> <th> artist </th> </tr>";
+    document.querySelector("#songtable").innerHTML = html;
+        for (let song of songs) {
+           let row = document.createElement("tr")
+           let title = document.createElement("td")
+           title.innerText = song.title;
+           row.append(title)
+           let artist = document.createElement("td")
+           artist.innerText = song.artist;
+           row.append(artist)
+           let selectbttn = document.createElement("button")
+           selectbttn.innerText="Delete"
+
+            selectbttn.value = song._id
+            selectbttn.addEventListener('click', selectlistener)
+            row.append(selectbttn)
+            document.getElementById("songtable").append(row)
+
+           //html += `<tr><td>${song.title}</td> <td>${song.artist}</td> <td><button class = "selectsong" value="${song._id}">Select</button></td> </tr>`; 
+        
+    }
+    
+});
+
+    </script>
+</body>
+        <footer>
+            <p>&#169 The Music Company - Created by Sabri Abounozha </p>
+        </footer>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    
+<head>
+    <title>songs</title>
+    <h1>Music Services</h1>
+</head>
+
+<body>
+
+    <td>
+        <tr><button  ><a href="searchbygenre.html">Search By Genre</a></button></tr>
+        <tr><button ><a href="updatesong.html">Update a song</a></button></tr>
+        <tr><button  ><a href="deletesong.html">Delete a song</a></button></tr>
+        <tr><button  ><a href="addsong.html"> Add a song</a></button></tr>
+        <tr><button  ><a href="listall.html"> List all songs</a></button></tr>
+    </td>
+
+    
+    <link rel="stylesheet" href="effects.css">
+    
+    <script src="script.js">
+
+       
+    </script>
+
+    <h1>Songs</h1>
+
+    <table id= "songtable">
+        
+
+      </table>
+   
+</body>
+
+<script>addEventListener("DOMContentLoaded", async function() {
+    const response = await fetch("/api/songs");
+    const songs = await response.json();
+
+    let html = "<tr> <th> ID </th> <th> Title </th> <th> artist </th> <th> Release Date </th> <th> Popularity </th> <th> Genre </th></tr>";
+        for (let song of songs) {
+        
+           html += `<tr> <td>${song._id}</td>  <td>${song.title}</td> <td>${song.artist}</td>  <td>${song.releaseDate}</td> <td>${song.popularity}</td> <td>${song.genre}</td> </tr>`; 
+        
+}
+
+    document.querySelector("#songtable").innerHTML = html;
+});
+</script>
+
+        <footer>
+            <p>&#169 The Music Company - Created by Sabri Abounozha </p>
+        </footer>
+</html>

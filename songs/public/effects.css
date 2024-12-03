@@ -1,0 +1,26 @@
+h1{
+    background-color: gray;
+    
+    
+}
+nav tr {
+	display: inline;
+ }
+ 
+ nav tr a {
+	text-decoration: none;  
+	padding: 10px 20px;
+ }
+ 
+ nav tr a:hover {
+	color: rgb(248, 4, 4);
+	background-color: rgb(0, 0, 0);    
+ }
+ nav td {
+	list-style-type: none;
+	padding: 10px 0;
+ }
+
+ table, th, td {
+	border:1px solid black;
+  }

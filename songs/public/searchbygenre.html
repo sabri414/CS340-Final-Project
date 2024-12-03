@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    
+<head>
+    <title>songs</title>
+    <h1>Music Services</h1>
+</head>
+
+<body>
+    <td>
+        <tr><button  ><a href="searchbygenre.html">Search By Genre</a></button></tr>
+        <tr><button ><a href="updatesong.html">Update a song</a></button></tr>
+        <tr><button  ><a href="deletesong.html">Delete a song</a></button></tr>
+        <tr><button  ><a href="addsong.html"> Add a song</a></button></tr>
+        <tr><button  ><a href="listall.html"> List all songs</a></button></tr>
+    </td>
+
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="effects.css">
+
+    <p>
+        <label for="game-date">Genre:</label>
+        <select id="game-date" name="gameDate">
+          
+        </select>
+        <button id="searchbygenre">Search</button>
+      </p>
+
+      <h1>Songs</h1>
+
+      <table id= "songtable">
+          
+     </table>
+<script>addEventListener("DOMContentLoaded", async function() {
+    const response = await fetch("/api/songs");
+    const songs = await response.json();
+    let genrestr = ""
+   // let html = "<tr> <th> ID </th> <th> Title </th> <th> artist </th> <th> Release Date </th> <th> Popularity </th> <th> Genre </th></tr>";
+        for (let song of songs) {
+            genrestr += song.genre + ","
+     //      html += `<tr> <td>${song._id}</td>  <td>${song.title}</td> <td>${song.artist}</td>  <td>${song.releaseDate}</td> <td>${song.popularity}</td> <td>${song.genre}</td> </tr>`; 
+        
+}
+    let genrearray = genrestr.split(",")
+    let genres = [...new Set(genrearray)]
+    let optionstr = " "
+    for(let genre of genres){
+       
+        optionstr += `<option value = "${genre}" > ${genre} </option>`
+    }
+    function showtable(songarray){
+        let html = "<tr> <th> ID </th> <th> Title </th> <th> artist </th> <th> Release Date </th> <th> Popularity </th> <th> Genre </th></tr>";
+        for (let song of songarray) {
+        
+           html += `<tr> <td>${song._id}</td>  <td>${song.title}</td> <td>${song.artist}</td>  <td>${song.releaseDate}</td> <td>${song.popularity}</td> <td>${song.genre}</td> </tr>`; 
+        
+}
+document.querySelector("#songtable").innerHTML = html;
+    }
+   document.getElementById("searchbygenre").addEventListener('click',(e) => {
+       let selectedgenre = document.getElementById("game-date").value
+       let filteredsongs = songs.filter(song => {
+           console.log(song.genre,selectedgenre)
+       return song.genre.includes(selectedgenre)
+    
+    })
+       showtable(filteredsongs)
+   })
+    document.getElementById("game-date").innerHTML = optionstr
+});
+</script>
+
+</body>
+        <footer>
+            <p>&#169 The Music Company - Created by Sabri Abounozha </p>
+        </footer>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    
+<head>
+    <title>songs</title>
+    <h1>Music Services</h1>
+</head>
+
+<body>
+    <td>
+        <tr><button  ><a href="searchbygenre.html">Search By Genre</a></button></tr>
+        <tr><button ><a href="updatesong.html">Update a song</a></button></tr>
+        <tr><button  ><a href="deletesong.html">Delete a song</a></button></tr>
+        <tr><button  ><a href="addsong.html"> Add a song</a></button></tr>
+        <tr><button  ><a href="listall.html"> List all songs</a></button></tr>
+    </td>
+
+
+
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="effects.css">
+
+           
+</script>
+
+<h1>Songs</h1>
+
+<table id= "songtable">
+    
+
+ </table>
+
+
+
+    <!--<form method="PUT" action="/api/songs">-->
+        <fieldset>
+           <label>ID</label>
+           <input type="text" id="songId" name="ID">
+
+           <p id="name"><label>Title: </label>
+           <input type="text" id="title" name="student" ></p>
+
+           <p class="container"><label>artist</label>
+            <input type="text" id="artist" name ="artist" placeholder="Enter name">
+
+           </p>
+           <p id="meeting"><label >Realeased </label>
+             <input type="date" id="released" name="Realeased"></p>
+           
+           <p class="label"><label>Popularity: </label>
+               <input type="number" id="popularity" name="Popularity">
+           </p>			
+
+           <p class="label"><label>Genre: </label>
+            <input type="text" id="genre" name="Genre">
+             </p>	
+           <button type="submit" id="updateButton" value="Submit">Update</button>
+           </fieldset>
+     
+
+
+</body>
+
+<script>addEventListener("DOMContentLoaded", async function() {
+    const updateButton = document.getElementById('updateButton');
+    updateButton.addEventListener('click', (e) => {
+   e.preventDefault();
+   console.log("clickedupdatebutton")
+  // Implement create functionality
+  const song = {
+    _id: document.querySelector("#songId").value,
+    title: document.querySelector("#title").value,
+    artist: document.querySelector("#artist").value,
+    releaseDate: document.querySelector("#released").value,
+    popularity: document.querySelector("#popularity").value,
+    genre: document.querySelector("#genre").value ? 
+       document.querySelector("#genre").value.split(",") : []
+ };
+   
+    fetch('/api/songs/' + document.getElementById("songId").value, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(song),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Created song:', data);
+        // Handle the response as needed
+      })
+      .catch(error => {
+        console.error('Failed to create song:', error);
+        // Handle the error as needed
+      });
+  });
+
+    const response = await fetch("/api/songs");
+    const songs = await response.json();
+    
+    
+    async function selectlistener(e){
+        e.preventDefault()
+        console.log(e.target.value)
+        let responce = await fetch("api/songs/" + e.target.value)
+        let songdata = await responce.json()
+        document.getElementById("songId").value = songdata._id
+        document.getElementById("title").value = songdata.title
+        document.getElementById("artist").value = songdata.artist
+        document.getElementById("released").value = songdata.released
+        document.getElementById("popularity").value = songdata.popularity
+        document.getElementById("genre").value = songdata.genre
+
+    }
+    
+    let html = "<tr> <th> Title </th> <th> artist </th> </tr>";
+    document.querySelector("#songtable").innerHTML = html;
+        for (let song of songs) {
+           let row = document.createElement("tr")
+           let title = document.createElement("td")
+           title.innerText = song.title;
+           row.append(title)
+           let artist = document.createElement("td")
+           artist.innerText = song.artist;
+           row.append(artist)
+           let selectbttn = document.createElement("button")
+           selectbttn.innerText="select"
+
+            selectbttn.value = song._id
+            selectbttn.addEventListener('click', selectlistener)
+            row.append(selectbttn)
+            document.getElementById("songtable").append(row)
+
+           //html += `<tr><td>${song.title}</td> <td>${song.artist}</td> <td><button class = "selectsong" value="${song._id}">Select</button></td> </tr>`; 
+        
+    }
+    
+});
+
+</script>
+        <footer>
+            <p>&#169 The Music Company - Created by Sabri Abounozha </p>
+        </footer>
+</html>
