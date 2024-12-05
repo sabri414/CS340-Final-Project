@@ -2,14 +2,12 @@
 	session_start();
 	//$currentpage="View Employees"; 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Company DB</title>
 <!-- Latest compiled and minified CSS -->
- <!-- these are some changes to see if we can commit new code -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
 <!-- jQuery library -->
@@ -52,8 +50,8 @@
                                         <li> UPDATE employeee and dependent records</li>
 					<li> DELETE employee and dependent records </li>
 				</ol>
-		       <h2 class="pull-left">Employee Details</h2>
-                        <a href="createEmployee.php" class="btn btn-success pull-right">Add New Employee</a>
+		       <h2 class="pull-left">Playlists</h2>
+                        <a href="createEmployee.php" class="btn btn-success pull-right">Add New Playlists</a>
                     </div>
                     <?php
                     // Include config file
@@ -66,37 +64,25 @@
 						$sql = "SELECT Ssn,Fname,Lname,Salary, Address, Bdate, PayLevel(Ssn) as Level, Super_ssn, Dno
 							FROM EMPLOYEE";
 					*/
-                    $sql = "SELECT Ssn,Fname,Lname,Salary, Address, Bdate, PayLevel(Ssn) as Level, Super_ssn, Dno
-							FROM EMPLOYEE";
+                    $sql = "SELECT Playlist_id,Playlist_name,User_id
+							FROM Playlist";
                     if($result = mysqli_query($link, $sql)){
                         if(mysqli_num_rows($result) > 0){
                             echo "<table class='table table-bordered table-striped'>";
                                 echo "<thead>";
                                     echo "<tr>";
-                                        echo "<th width=8%>SSN</th>";
-                                        echo "<th width=10%>First Name</th>";
-                                        echo "<th width=10%>Last Name</th>";
-                                        echo "<th width=15%>Address </th>";
-										echo "<th width=10%>Birthdate </th>";
-										echo "<th width = 5%>Salary</th>";
-                                        echo "<th width=10%> Level  </th>";
-                                        echo "<th width =8%>Super SSN  </th>";
-										echo "<th width =5%>Dno  </th>";
+                                        echo "<th width=10%>Playlist_id</th>";
+                                        echo "<th width =8%>Playlist_name</th>";
+                                        echo "<th width=10%>User_id</th>";
                                         echo "<th width=10%>Action</th>";
                                     echo "</tr>";
                                 echo "</thead>";
                                 echo "<tbody>";
                                 while($row = mysqli_fetch_array($result)){
                                     echo "<tr>";
-                                        echo "<td>" . $row['Ssn'] . "</td>";
-                                        echo "<td>" . $row['Fname'] . "</td>";
-                                        echo "<td>" . $row['Lname'] . "</td>";
-										echo "<td>" . $row['Address'] . "</td>";									
-										echo "<td>" . $row['Bdate'] . "</td>";
-                                        echo "<td>" . $row['Salary'] . "</td>";										
-                                        echo "<td>" . $row['Level'] . "</td>";
-										echo "<td>" . $row['Super_ssn'] . "</td>";
-                                        echo "<td>" . $row['Dno'] . "</td>";
+                                        echo "<td>" . $row['Playlist_id'] . "</td>";
+                                        echo "<td>" . $row['Playlist_name'] . "</td>";
+                                        echo "<td>" . $row['User_id'] . "</td>";
                                         echo "<td>";
                                             echo "<a href='viewProjects.php?Ssn=". $row['Ssn']."&Lname=".$row['Lname']."' title='View Projects' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
                                             echo "<a href='updateEmployee.php?Ssn=". $row['Ssn'] ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
