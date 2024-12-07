@@ -33,6 +33,7 @@
     </script>
 </head>
 <body>
+ 
     <?php
         // Include config file
         require_once "config.php";
@@ -45,13 +46,19 @@
 		    <div class="page-header clearfix">
 		     <h2> Sample Project CS 340 </h2> 
                        <p> Project should include CRUD operations. In this website you can:
-				<ol> 	<li> CREATE new employess and  dependents </li>
-					<li> RETRIEVE all dependents and prjects for an employee</li>
-                                        <li> UPDATE employeee and dependent records</li>
-					<li> DELETE employee and dependent records </li>
+				<ol> 
+                <td>
+        
 				</ol>
 		       <h2 class="pull-left">Playlists</h2>
-                        <a href="createEmployee.php" class="btn btn-success pull-right">Add New Playlists</a>
+                 <tr><button  ><a href="viewDependent.php">Search Playlist</a></button></tr>
+        <tr><button ><a href="updateDependent.php">Update a song</a></button></tr>
+        <tr><button  ><a href="deleteDependent.php">Delete a song</a></button></tr>
+        <tr><button  ><a href="createEmployee.php"> Add a song</a></button></tr>
+        <tr><button  ><a href="viewProjects.php"> List all songs</a></button></tr>
+        <a href="createEmployee.php" class="btn btn-success pull-right">Add New Playlists</a>
+         </td>
+                       
                     </div>
                     <?php
                     // Include config file
@@ -84,7 +91,7 @@
                                         echo "<td>" . $row['Playlist_name'] . "</td>";
                                         echo "<td>" . $row['User_id'] . "</td>";
                                         echo "<td>";
-                                            echo "<a href='viewProjects.php?Ssn=". $row['Ssn']."&Lname=".$row['Lname']."' title='View Projects' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
+                                            echo "<a href='viewPlaylist.php?Ssn=". $row['Playlist_id']."' title='View songs' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
                                             echo "<a href='updateEmployee.php?Ssn=". $row['Ssn'] ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
                                             echo "<a href='deleteEmployee.php?Ssn=". $row['Ssn'] ."' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
 											echo "<a href='viewDependents.php?Ssn=". $row['Ssn']."&Lname=".$row['Lname']."' title='View Dependents' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
@@ -101,29 +108,32 @@
                     } else{
                         echo "ERROR: Could not able to execute $sql. <br>" . mysqli_error($link);
                     }
-					echo "<br> <h2> Department Stats </h2> <br>";
+					echo "<br> <h2> Playlist Stats </h2> <br>";
 					
                     // Select Department Stats
 					// You will need to Create a DEPT_STATS table
 					
-                    $sql2 = "SELECT * FROM DEPT_STATS";
+                    $sql2 = "SELECT Playlist.Playlist_id AS 'pid', Playlist_name, SUM(Duration) AS total_duration 
+                            FROM Song, added , Playlist 
+                            WHERE added.song_id = Song.Song_id AND added.playlist_id = Playlist.Playlist_id 
+                            GROUP BY Playlist.Playlist_id";
                     if($result2 = mysqli_query($link, $sql2)){
                         if(mysqli_num_rows($result2) > 0){
                             echo "<div class='col-md-4'>";
 							echo "<table width=30% class='table table-bordered table-striped'>";
                                 echo "<thead>";
                                     echo "<tr>";
-                                        echo "<th width=20%>Dno</th>";
-                                        echo "<th width = 20%>Number of Employees</th>";
-                                        echo "<th width = 40%>Average Salary</th>";
+                                        echo "<th width=20%>Playlist_id</th>";
+                                        echo "<th width = 40%>Playlist name</th>";
+                                        echo "<th width = 40%>Duration </th>";
 	
                                 echo "</thead>";
                                 echo "<tbody>";
                                 while($row = mysqli_fetch_array($result2)){
                                     echo "<tr>";
-                                        echo "<td>" . $row['Dnumber'] . "</td>";
-                                        echo "<td>" . $row['Emp_count'] . "</td>";
-                                        echo "<td>" . $row['Avg_salary'] . "</td>";
+                                        echo "<td>" . $row['pid'] . "</td>";
+                                        echo "<td>" . $row['Playlist_name'] . "</td>";
+                                        echo "<td>" . $row['total_duration'] . "</td>";
                
                                     echo "</tr>";
                                 }
