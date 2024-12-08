@@ -1,85 +1,57 @@
 ﻿<?php
-	session_start();
-	ob_start();
-	$Ssn = $_SESSION["Ssn"];
-	$Lname = $_SESSION["Lname"];
-	// Include config file
-	require_once "config.php";
+session_start();
+ob_start();
 
-?>
+// Temporary session setup (Replace with real login logic)
+$_SESSION["Ssn"] = "123456789"; // Example SSN
+$_SESSION["Lname"] = "Doe";     // Example Last Name
 
+if (!isset($_SESSION["Ssn"]) || !isset($_SESSION["Lname"])) {
+    die("Session variables not set. Please login again.");
+}
 
-<?php 
-	// Define variables and initialize with empty values
-	$Pno = "";
-	$Pno_err = $Ssn_err = $Hours_err = "" ;
-	$SQL_err="";
- 
-	// Processing form data when form is submitted
-	if($_SERVER["REQUEST_METHOD"] == "POST"){
-		// Validate Project number
-		$Pno = trim($_POST["Pno"]);
-		if(empty($Pno)){
-			$Pno_err = "Please select a project.";
-		} 
-    
-		// Validate Hours
-		$Hours = trim($_POST["Hours"]);
-		if(empty($Hours)){
-			$Hours_err = "Please enter hours (1-40)";     
-		}
-	
-		// Validate the SSN
-		if(empty($Ssn)){
-			$Ssn_err = "No SSN.";     
-		}
+$Ssn = $_SESSION["Ssn"];
+$Lname = htmlspecialchars($_SESSION["Lname"]);
 
+require_once "config.php";
 
-    // Check input errors before inserting in database
-		if(empty($Ssn_err) && empty($Hours_err) && empty($Pno_err) ){
-        // Prepare an insert statement
-			$sql = "INSERT INTO WORKS_ON (Essn, Pno, Hours) VALUES (?, ?, ?)";
+$SongId = $Duration = "";
+$SongId_err = $Duration_err = $SQL_err = "";
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $SongId = trim($_POST["SongId"]);
+    if (empty($SongId)) {
+        $SongId_err = "Please select a song.";
+    }
 
-        	if($stmt = mysqli_prepare($link, $sql)){
-            // Bind variables to the prepared statement as parameters
-				mysqli_stmt_bind_param($stmt, 'sii', $param_Ssn, $param_Pno, $param_Hours);
-            
-				// Set parameters
-				$param_Ssn = $Ssn;
-				$param_Pno = $Pno;
-				$param_Hours = $Hours;
-        
-            // Attempt to execute the prepared statement
-				if(mysqli_stmt_execute($stmt)){
-               // Records created successfully. Redirect to landing page
-				//    header("location: index.php");
-				//	exit();
-				} else{
-					// Error
-					echo "Error";
-					//exit();
-					$SQL_err = mysqli_error($link);
-				}
-			}
-         
-        // Close statement
-        mysqli_stmt_close($stmt);
-		
-	}   
-		// Close connection
-		mysqli_close($link);
+    $Duration = trim($_POST["Duration"]);
+    if (!is_numeric($Duration) || $Duration < 1 || $Duration > 900) {
+        $Duration_err = "Please enter a valid duration (1-900 seconds).";
+    }
+
+    if (empty($SongId_err) && empty($Duration_err)) {
+        $sql = "INSERT INTO WORKS_ON (Essn, SongId, Duration) VALUES (?, ?, ?)";
+        if ($stmt = mysqli_prepare($link, $sql)) {
+            mysqli_stmt_bind_param($stmt, "sii", $Ssn, $SongId, $Duration);
+
+            if (mysqli_stmt_execute($stmt)) {
+                echo "<div class='alert alert-success'>Song added to the playlist successfully!</div>";
+            } else {
+                $SQL_err = "Database error: " . mysqli_error($link);
+            }
+            mysqli_stmt_close($stmt);
+        }
+    }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Company DB</title>
+    <title>Music Playlist</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
-    <style type="text/css">
-        .wrapper{
+    <style>
+        .wrapper {
             width: 500px;
             margin: 0 auto;
         }
@@ -87,60 +59,77 @@
 </head>
 <body>
     <div class="wrapper">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-10">
-                    <div class="page-header">
-                        <h3>Add a Project </h3>
-						<h4><?php echo $Lname;?> SSN = <?php echo $Ssn;?></h4>
-                    </div>
-				
-<?php
-	echo $SQL_err;		
-	$conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
-	if (!$conn) {
-		die('Could not connect: ' . mysqli_error());
-	}
-	$sql = "SELECT Pnumber, Pname FROM PROJECT";
-	$result = mysqli_query($conn, $sql);
-	if (!$result) {
-		die("Query to show fields from table failed");
-	}
-	$num_row = mysqli_num_rows($result);	
-?>	
+        <h3>Add a Song to Playlist</h3>
+        <h4><?php echo htmlspecialchars($Lname); ?> (SSN: <?php echo htmlspecialchars($Ssn); ?>)</h4>
+        <?php if (!empty($SQL_err)) echo "<div class='alert alert-danger'>$SQL_err</div>"; ?>
 
-	<form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
-		<div class="form-group <?php echo (!empty($Ssn_err)) ? 'has-error' : ''; ?>">
-            <label>Project number & name</label>
-			<select name="Pno" class="form-control">
-			<?php
+        <?php
+        $sql = "SELECT Playlist.Playlist_id, Playlist_name FROM Song, added , Playlist"; // Replace with actual column names
+        $result = mysqli_query($link, $sql);
+        if (!$result) {
+            die("<div class='alert alert-danger'>Error fetching songs: " . mysqli_error($link) . "</div>");
+        }
+        ?>
 
-				for($i=0; $i<$num_row; $i++) {
-					$Pnos=mysqli_fetch_row($result);
-					echo "<option value='$Pnos[0]' >".$Pnos[0]."  ".$Pnos[1]."</option>";
-				}
-			?>
-			</select>	
-            <span class="help-block"><?php echo $Pno_err;?></span>
-		</div>
-		<div class="form-group <?php echo (!empty($Hours_err)) ? 'has-error' : ''; ?>">
-			<label>Hours </label>
-			<input type="number" name="Hours" class="form-control" min="1" max="80" value="">
-			<span class="help-block"><?php echo $Hours_err;?></span>
-		</div>
-		<div>
-			<input type="submit" class="btn btn-success pull-left" value="Add Project">	
-			&nbsp;
-			<a href="viewProjects.php" class="btn btn-primary">List Projects</a>
+<form action="
+<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+						<div class="form-group <?php echo (!empty($Playlist_id_err)) ? 'has-error' : ''; ?>">
+                            <label>Song id</label>
+                            <input type="text" name="Song_id" class="form-control" value="<?php echo $Playlist_id; ?>">
+                            <span class="help-block"><?php echo $Playlist_id_err;?></span>
+                        </div>
+                 
+						<div class="form-group <?php echo (!empty($Playlist_name_err)) ? 'has-error' : ''; ?>">
+                            <label>Song Name</label>
+                            <input type="text" name="Song_name" class="form-control" value="<?php echo $Playlist_name; ?>">
+                            <span class="help-block"><?php echo $Playlist_name_err;?></span>
+                        </div>
+                        <div class="form-group <?php echo (!empty($Playlist_name_err)) ? 'has-error' : ''; ?>">
+                            <label>Record Label</label>
+                            <input type="text" name="Record_Label" class="form-control" value="<?php echo $Playlist_name; ?>">
+                            <span class="help-block"><?php echo $Playlist_name_err;?></span>
+                        </div>
+						<div class="form-group <?php echo (!empty($Lname_err)) ? 'has-error' : ''; ?>">
+                            <label>Artist Name</label>
+                            <input type="text" name="Artist" class="form-control" value="<?php echo $User_id; ?>">
+                            <span class="help-block"><?php echo $User_id_err;?></span>
+                        </div>
+                        <div class="form-group <?php echo (!empty($Lname_err)) ? 'has-error' : ''; ?>">
+                            <label>Language</label>
+                            <input type="text" name="Langauge" class="form-control" value="<?php echo $User_id; ?>">
+                            <span class="help-block"><?php echo $User_id_err;?></span>
+                        </div>
+                        <div class="form-group <?php echo (!empty($Lname_err)) ? 'has-error' : ''; ?>">
+                            <label>Category</label>
+                            <input type="text" name="Category" class="form-control" value="<?php echo $User_id; ?>">
+                            <span class="help-block"><?php echo $User_id_err;?></span>
+                        </div>
+        
+                        <div class="form-group <?php echo (!empty($Duration_err)) ? 'has-error' : ''; ?>">
+                       <label>Duration (seconds)</label>
+                      <input type="number" name="Duration" class="form-control" min="1" max="900" value="<?php echo $Duration; ?>">
+                       <span class="help-block"><?php echo $Duration_err; ?></span>
+                        </div>
+                         <div class="form-group <?php echo (!empty($Lname_err)) ? 'has-error' : ''; ?>">
+                            <label>Artist_id</label>
+                            <input type="text" name="Artist_id" class="form-control" value="<?php echo $User_id; ?>">
+                            <span class="help-block"><?php echo $User_id_err;?></span>
+                        </div>
+            <div class="form-group">
+            <form action="addSongToPlaylist.php" method="POST">
+             <input type="hidden" name="song_id" value="34"> <!-- Replace 123 with dynamic song ID -->
+            <input type="hidden" name="playlist_id" value="59"> <!-- Replace 456 with dynamic playlist ID -->
+          <input type="submit" class="btn btn-success" value="Add to Playlist">
+            </form>
+                <a href="viewPlaylist.php?Ssn=12345" class="btn btn-primary">View Songs</a>
 
-		</div>
-	</form>
-<?php		
-	mysqli_free_result($result);
-	mysqli_close($conn);
-?>
+            </div>
+        </form>
+
+        <?php
+        mysqli_free_result($result);
+        mysqli_close($link);
+        ?>
+    </div>
 </body>
-
 </html>
-
-	
