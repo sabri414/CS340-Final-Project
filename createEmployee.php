@@ -101,7 +101,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <input type="text" name="Playlist_name" class="form-control" value="<?php echo $Playlist_name; ?>">
                             <span class="help-block"><?php echo $Playlist_name_err;?></span>
                         </div>
-						<div class="form-group <?php echo (!empty($Lname_err)) ? 'has-error' : ''; ?>">
+						<div class="form-group <?php echo (!empty($User_id_err)) ? 'has-error' : ''; ?>">
                             <label>User id</label>
                             <input type="text" name="User_id" class="form-control" value="<?php echo $User_id; ?>">
                             <span class="help-block"><?php echo $User_id_err;?></span>
