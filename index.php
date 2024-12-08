@@ -53,8 +53,8 @@
 		       <h2 class="pull-left">Playlists</h2>
                  <tr><button  ><a href="viewDependent.php">Search Playlist</a></button></tr>
         <tr><button ><a href="updateDependent.php">Update a song</a></button></tr>
-        <tr><button  ><a href="deleteDependent.php">Delete a song</a></button></tr>
-        <tr><button  ><a href="createEmployee.php"> Add a song</a></button></tr>
+        <tr><button  ><a href="deletesong.php">Delete a song</a></button></tr>
+        <tr><button  ><a href="createSong.php"> Add a song</a></button></tr>
         <tr><button  ><a href="viewProjects.php"> List all songs</a></button></tr>
         <a href="createEmployee.php" class="btn btn-success pull-right">Add New Playlists</a>
          </td>
@@ -92,9 +92,9 @@
                                         echo "<td>" . $row['User_id'] . "</td>";
                                         echo "<td>";
                                             echo "<a href='viewPlaylist.php?Ssn=". $row['Playlist_id']."' title='View songs' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
-                                            echo "<a href='updateEmployee.php?Ssn=". $row['Ssn'] ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
-                                            echo "<a href='deleteEmployee.php?Ssn=". $row['Ssn'] ."' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
-											echo "<a href='viewDependents.php?Ssn=". $row['Ssn']."&Lname=".$row['Lname']."' title='View Dependents' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
+                                            echo "<a href='updateEmployee.php?Ssn=". $row['Artist_id'] ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+                                            echo "<a href='deleteEmployee.php?Ssn=". $row['Artist_id'] ."' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
+											echo "<a href='viewDependents.php?Ssn=". $row['Artist_id']."' title='View Dependents' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
                                         echo "</td>";
                                     echo "</tr>";
                                 }
