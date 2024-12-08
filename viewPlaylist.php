@@ -7,7 +7,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>View Projects</title>
+    <title>View Playlists</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.js"></script>
@@ -27,18 +27,25 @@
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();   
         });
+        
     </script>
+    
+
 </head>
 <body>
+<table id= "songtable"></table>
+
+
     <div class="wrapper">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
                     <div class="page-header clearfix">
-                        <h2 class="pull-left">View Projects</h2>
-						<a href="addProject.php" class="btn btn-success pull-right">Add Project</a>
+                        <h2 class="pull-left">View Playlist</h2>
+						<a href="addProject.php" class="btn btn-success pull-right">Add Song</a>
                     </div>
 <?php
+
 
 // Check existence of id parameter before processing further
 if(isset($_GET["Ssn"]) && !empty(trim($_GET["Ssn"]))){
@@ -51,56 +58,53 @@ if(isset($_GET["Lname"]) && !empty(trim($_GET["Lname"]))){
 if(isset($_SESSION["Ssn"]) ){
 	
     // Prepare a select statement
-    $sql = "SELECT P.Pname, P.Pnumber, WO.Hours, WO.Essn FROM PROJECT P, WORKS_ON WO WHERE WO.Essn = ? AND WO.Pno = P.Pnumber";
-
-	//$sql = "SELECT Essn, Pno, Hours From WORKS_ON WHERE Essn = ? ";   
-    if($stmt = mysqli_prepare($link, $sql)){
-        // Bind variables to the prepared statement as parameters
-        mysqli_stmt_bind_param($stmt, "s", $param_Ssn);      
-        // Set parameters
-       $param_Ssn = $_SESSION["Ssn"];
-	   $Lname = $_SESSION["Lname"];
-
-        // Attempt to execute the prepared statement
-        if(mysqli_stmt_execute($stmt)){
-            $result = mysqli_stmt_get_result($stmt);
-    
-			echo"<h4> Projects for ".$Lname." &nbsp      SSN =".$param_Ssn."</h4><p>";
-			if(mysqli_num_rows($result) > 0){
-				echo "<table class='table table-bordered table-striped'>";
-                    echo "<thead>";
-                        echo "<tr>";
-                            echo "<th width = 20%>Project Number</th>";
-                            echo "<th>Project Name</th>";
-                            echo "<th>Hours</th>";
-                        echo "</tr>";
-                    echo "</thead>";
-                    echo "<tbody>";							
-				// output data of each row
-                    while($row = mysqli_fetch_array($result)){
-                        echo "<tr>";
-                        echo "<td>" . $row['Pnumber'] . "</td>";
-                        echo "<td>" . $row['Pname'] . "</td>";
-                        echo "<td>" . $row['Hours'] . "</td>";
-    
-                        echo "</tr>";
-                    }
-                    echo "</tbody>";                            
-                echo "</table>";				
-				mysqli_free_result($result);
-			} else {
-				echo "No Projects. ";
-			}
-//				mysqli_free_result($result);
-        } else{
-			// URL doesn't contain valid id parameter. Redirect to error page
-            header("location: error.php");
-            exit();
+    $sql = "SELECT Song_id, Song_title ,Record_Label
+    FROM Song";
+if($result = mysqli_query($link, $sql)){
+if(mysqli_num_rows($result) > 0){
+    echo "<table class='table table-bordered table-striped'>";
+        echo "<thead>";
+            echo "<tr>";
+                echo "<th width=10%>Song_id</th>";
+                echo "<th width =8%>Song_Title</th>";
+                echo "<th width=10%>Record_Label</th>";
+            echo "</tr>";
+        echo "</thead>";
+        echo "<tbody>";
+        while($row = mysqli_fetch_array($result)){
+            echo "<tr>";
+                echo "<td>" . $row['Song_id'] . "</td>";
+                echo "<td>" . $row['Song_title'] . "</td>";
+                echo "<td>" . $row['Record_Label'] . "</td>";
+            echo "</td>";
+            echo "</tr>";
         }
-    }     
-    // Close statement
+        echo "</tbody>";                            
+    echo "</table>";
+    // Free result set
+    mysqli_free_result($result);
+} else{
+    echo "<p class='lead'><em>No records were found.</em></p>";
+}
+} else{
+echo "ERROR: Could not able to execute $sql. <br>" . mysqli_error($link);
+}
     mysqli_stmt_close($stmt);
-    
+    $sql = "SELECT song_id, song_title FROM Song";
+$result = mysqli_query($link, $sql);
+
+if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<form action='addSongToPlaylist.php' method='POST'>";
+        echo "<input type='hidden' name='song_id' value='" . $row['song_id'] . "'>";
+        echo "<input type='hidden' name='playlist_id' value='1'>"; // Replace '1' with dynamic playlist ID
+        echo "<p>" . $row['song_title'] . "</p>";
+        echo "<input type='submit' class='btn btn-success' value='Add to Playlist'>";
+        echo "</form>";
+    }
+} else {
+    echo "No songs available.";
+}
     // Close connection
     mysqli_close($link);
 } else{
@@ -116,3 +120,5 @@ if(isset($_SESSION["Ssn"]) ){
 </div>
 </body>
 </html>
+
+

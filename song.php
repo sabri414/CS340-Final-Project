@@ -6,7 +6,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Spotify</title>
+    <title>Company DB</title>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
@@ -33,7 +33,6 @@
     </script>
 </head>
 <body>
- 
     <?php
         // Include config file
         require_once "config.php";
@@ -46,24 +45,13 @@
 		    <div class="page-header clearfix">
 		     <h2> Sample Project CS 340 </h2> 
                        <p> Project should include CRUD operations. In this website you can:
-				<ol> 
-                <td>
-        
+				<ol> 	<li> CREATE new employess and  dependents </li>
+					<li> RETRIEVE all dependents and prjects for an employee</li>
+                                        <li> UPDATE employeee and dependent records</li>
+					<li> DELETE employee and dependent records </li>
 				</ol>
-		       <h2 class="pull-left">Playlists</h2>
-               <tr>
-                      <td><a href="updateDependent.php" class="btn btn-warning">Update a Song</a></td>
-                      <td><a href="deletesong.php" class="btn btn-danger">Delete a Song</a></td>
-                      <td><a href="createSong.php" class="btn btn-success">Add a Song</a></td>
-                     <td><a href="viewPlaylist.php?Ssn=" class="btn btn-info">List All Songs</a></td>
-                      <td><a href="createEmployee.php" class="btn btn-success pull-right">Add New Playlists</a></td>
-                      <td><a href= "createASong.php" class="btn btn-danger">Create a new song</a></td>
-                      <td><a href="Check Record.php?Ssn=" class= "btn btn-warning">Check Record</a></td>
-                       <td> "<a href="CheckCategory.php?Ssn=" class="btn btn-danger">Check Category </a></td>
-                       <td><a href="checkArtist.php?Ssn=" class="btn btn-success">Check Artist</a></td>
-
-                </tr>
-                       
+		       <h2 class="pull-left">Employee Details</h2>
+                        <a href="createEmployee.php" class="btn btn-success pull-right">Add New Employee</a>
                     </div>
                     <?php
                     // Include config file
@@ -76,27 +64,40 @@
 						$sql = "SELECT Ssn,Fname,Lname,Salary, Address, Bdate, PayLevel(Ssn) as Level, Super_ssn, Dno
 							FROM EMPLOYEE";
 					*/
-                    $sql = "SELECT Playlist_id,Playlist_name,User_id
-							FROM Playlist";
+                    $sql = "SELECT song_id,Song_Title,Record_Label,Artist,Language,Category,ISBN,Artist_id 
+							FROM Song";
                     if($result = mysqli_query($link, $sql)){
                         if(mysqli_num_rows($result) > 0){
                             echo "<table class='table table-bordered table-striped'>";
                                 echo "<thead>";
                                     echo "<tr>";
-                                        echo "<th width=10%>Playlist_id</th>";
-                                        echo "<th width =8%>Playlist_name</th>";
-                                        echo "<th width=10%>User_id</th>";
+                                        echo "<th width=8%>Song_id</th>";
+                                        echo "<th width=10%>Song_title</th>";
+                                        echo "<th width=10%>Record_Label</th>";
+                                        echo "<th width=15%>Artist </th>";
+										echo "<th width=10%>Langauge </th>";
+										echo "<th width = 5%>Category</th>";
+                                        echo "<th width=10%> ISBN  </th>";
+                                        echo "<th width =8%>Artist_id  </th>";
                                         echo "<th width=10%>Action</th>";
                                     echo "</tr>";
                                 echo "</thead>";
                                 echo "<tbody>";
                                 while($row = mysqli_fetch_array($result)){
                                     echo "<tr>";
-                                        echo "<td>" . $row['Playlist_id'] . "</td>";
-                                        echo "<td>" . $row['Playlist_name'] . "</td>";
-                                        echo "<td>" . $row['User_id'] . "</td>";
+                                        echo "<td>" . $row['song_id'] . "</td>";
+                                        echo "<td>" . $row['Song_Title'] . "</td>";
+                                        echo "<td>" . $row['Record_Label'] . "</td>";
+										echo "<td>" . $row['Artist'] . "</td>";									
+										echo "<td>" . $row['Language'] . "</td>";
+                                        echo "<td>" . $row['Category'] . "</td>";
+                                        echo "<td>" . $row['ISBN'] . "</td>";				
+                                        echo "<td>" . $row['Artist_id'] . "</td>";
                                         echo "<td>";
-                                        echo "<a href='viewPlaylist.php?Ssn=". $row['Playlist_id']."' title='View songs' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
+                                            echo "<a href='viewProjects.php?Ssn=". $row['Ssn']."&Lname=".$row['Lname']."' title='View Projects' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
+                                            echo "<a href='updateEmployee.php?Ssn=". $row['Ssn'] ."' title='Update Record' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+                                            echo "<a href='deleteEmployee.php?Ssn=". $row['Ssn'] ."' title='Delete Record' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
+											echo "<a href='viewDependents.php?Ssn=". $row['Ssn']."&Lname=".$row['Lname']."' title='View Dependents' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
                                         echo "</td>";
                                     echo "</tr>";
                                 }
@@ -110,32 +111,29 @@
                     } else{
                         echo "ERROR: Could not able to execute $sql. <br>" . mysqli_error($link);
                     }
-					echo "<br> <h2> Playlist Stats </h2> <br>";
+					echo "<br> <h2> Department Stats </h2> <br>";
 					
                     // Select Department Stats
 					// You will need to Create a DEPT_STATS table
 					
-                    $sql2 = "SELECT Playlist.Playlist_id AS 'pid', Playlist_name, SUM(Duration) AS total_duration 
-                            FROM Song, added , Playlist 
-                            WHERE added.song_id = Song.Song_id AND added.playlist_id = Playlist.Playlist_id 
-                            GROUP BY Playlist.Playlist_id";
+                    $sql2 = "SELECT * FROM DEPT_STATS";
                     if($result2 = mysqli_query($link, $sql2)){
                         if(mysqli_num_rows($result2) > 0){
                             echo "<div class='col-md-4'>";
 							echo "<table width=30% class='table table-bordered table-striped'>";
                                 echo "<thead>";
                                     echo "<tr>";
-                                        echo "<th width=20%>Playlist_id</th>";
-                                        echo "<th width = 40%>Playlist name</th>";
-                                        echo "<th width = 40%>Duration </th>";
+                                        echo "<th width=20%>Dno</th>";
+                                        echo "<th width = 20%>Number of Employees</th>";
+                                        echo "<th width = 40%>Average Salary</th>";
 	
                                 echo "</thead>";
                                 echo "<tbody>";
                                 while($row = mysqli_fetch_array($result2)){
                                     echo "<tr>";
-                                        echo "<td>" . $row['pid'] . "</td>";
-                                        echo "<td>" . $row['Playlist_name'] . "</td>";
-                                        echo "<td>" . $row['total_duration'] . "</td>";
+                                        echo "<td>" . $row['Dnumber'] . "</td>";
+                                        echo "<td>" . $row['Emp_count'] . "</td>";
+                                        echo "<td>" . $row['Avg_salary'] . "</td>";
                
                                     echo "</tr>";
                                 }
