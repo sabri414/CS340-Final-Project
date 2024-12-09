@@ -1,3 +1,10 @@
+<!-- 
+ Names:
+Isabella Mann
+Dennis Aguilar
+Sabri Abounozha 
+Hunter McCoy
+Date: 12/8/2024 -->
 <?php
 	session_start();	
 // Include config file
